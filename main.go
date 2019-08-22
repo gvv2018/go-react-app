@@ -28,7 +28,7 @@ func getHotdogs( w http.ResponseWriter, r *http.Request) {
 
 	var hotdogs []Hotdog
 
-	result, err := db.Query("SELECT name, price FROM type_hotdogs")
+	result, err := db.Query("SELECT name, price FROM type_hotdogs;")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -52,7 +52,7 @@ func getHotdogs( w http.ResponseWriter, r *http.Request) {
 func createHotdog( w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	stmt, err := db.Prepare("INSERT INTO type_hotdogs (name) VALUES(?)")
+	stmt, err := db.Prepare("INSERT INTO type_hotdogs (name, price) VALUES(?, ?);")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -63,12 +63,12 @@ func createHotdog( w http.ResponseWriter, r *http.Request) {
 	}
 
 	keyVal := make(map[string]string)
-	fmt.Println(keyVal)
+//	fmt.Println(keyVal)
 	json.Unmarshal(body, &keyVal)
 	name := keyVal["name"]
+	price := keyVal["price"]
 	
-
-	_, err = stmt.Exec(name)
+	_, err = stmt.Exec(name, price)
 	if err != nil {
     	panic(err.Error())
   	}
