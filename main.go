@@ -54,26 +54,25 @@ func createHotdog( w http.ResponseWriter, r *http.Request) {
 
 	stmt, err := db.Prepare("INSERT INTO type_hotdogs (name, price) VALUES(?, ?);")
 	if err != nil {
-		panic(err.Error())
+	    panic(err.Error())
 	}
 
 	body, err := ioutil.ReadAll (r.Body)
 	if err != nil {
-		panic(err.Error())
+	    panic(err.Error())
 	}
 
 	keyVal := make(map[string]string)
-//	fmt.Println(keyVal)
 	json.Unmarshal(body, &keyVal)
 	name := keyVal["name"]
 	price := keyVal["price"]
 	
 	_, err = stmt.Exec(name, price)
 	if err != nil {
-    	panic(err.Error())
-  	}
+	    panic(err.Error())
+	}
 
-  	fmt.Fprintf(w, "New post was created")
+//	fmt.Println(name, price)
 }
 
 
