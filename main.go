@@ -52,7 +52,7 @@ func getHotdogs( w http.ResponseWriter, r *http.Request) {
 func createHotdog( w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	stmt, err := db.Prepare("INSERT INTO type_hotdogs (name, price) VALUES(?, ?);")
+	stmt, err := db.Prepare("INSERT INTO type_hotdogs (name, price) VALUES(?, ?)")
 	if err != nil {
 	    panic(err.Error())
 	}
@@ -75,6 +75,23 @@ func createHotdog( w http.ResponseWriter, r *http.Request) {
 //	fmt.Println(name, price)
 }
 
+// Function delete row with db
+
+func deletHotdog( w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+
+	stmt, err := db.Prepare("DELETE FROM type_hotdogs WHERE name = ?")
+	if err != nil {
+	    panic(err.Error())
+	}
+
+	_, err = stmt.Exec(params["name"])
+	if err != nil {
+	    panic(err.Error())
+	}
+
+}
 
 // Main Function ( create connection to db, create mux router)
 
@@ -93,7 +110,7 @@ func main(){
 	router.HandleFunc("/hotdogs", createHotdog).Methods("POST")
 //	router.HandleFunc("/hotdogs/{id}", getHotdog).Methods("GET")
 //	router.HandleFunc("/hotdogs/{id}", updateHotdog).Methods("PUT")
-//	router.HandleFunc("/hotdogs/{id}", deleteHotdog).Methods("DELETE")
+	router.HandleFunc("/hotdogs/{name}", deleteHotdog).Methods("DELETE")
 
 
 	fmt.Println("Server started on port :8080")
