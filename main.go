@@ -57,8 +57,6 @@ func main(){
 
 // Create router MUX
 	router := mux.NewRouter()
-//	hotdogs = append(hotdogs, Hotdog{Name: "Super", Price: "24"})
-//	hotdogs = append(hotdogs, Hotdog{Name: "Super 2", Price: "15"})
 	router.HandleFunc("/hotdogs", getHotdogs).Methods("GET")
 
 
