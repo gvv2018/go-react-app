@@ -77,7 +77,7 @@ func createHotdog( w http.ResponseWriter, r *http.Request) {
 
 // Function delete row with db
 
-func deletHotdog( w http.ResponseWriter, r *http.Request) {
+func deleteHotdog( w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 
@@ -87,6 +87,34 @@ func deletHotdog( w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = stmt.Exec(params["name"])
+	if err != nil {
+	    panic(err.Error())
+	}
+
+}
+
+// Function update row oin database
+
+func updateHotdog( w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+
+	stmt, err := db.Prepare("UPDATE type_hotdogs SET name = ?, price = ? WHERE name = ?")
+	if err != nil {
+	    panic(err.Error())
+	}
+
+	body, err := ioutil.ReadAll (r.Body)
+	if err != nil {
+	    panic(err.Error())
+	}
+
+	keyVal := make(map[string]string)
+	json.Unmarshal(body, &keyVal)
+	newName := keyVal["name"]
+	newPrice := keyVal["price"]
+	
+	_, err = stmt.Exec(newName, newPrice, params["name"])
 	if err != nil {
 	    panic(err.Error())
 	}
@@ -109,7 +137,7 @@ func main(){
 	router.HandleFunc("/hotdogs", getHotdogs).Methods("GET")
 	router.HandleFunc("/hotdogs", createHotdog).Methods("POST")
 //	router.HandleFunc("/hotdogs/{id}", getHotdog).Methods("GET")
-//	router.HandleFunc("/hotdogs/{id}", updateHotdog).Methods("PUT")
+	router.HandleFunc("/hotdogs/{name}", updateHotdog).Methods("PUT")
 	router.HandleFunc("/hotdogs/{name}", deleteHotdog).Methods("DELETE")
 
 
